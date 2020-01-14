@@ -33,15 +33,21 @@ public class PersistenceConfiguration {
     @ConfigurationProperties("app.datasource.main")
     public DataSource mainDataSource() {
         return DataSourceBuilder.create().type(HikariDataSource.class).build();
-    }    @Bean(name = "clientADataSource")
+    }
+
+    @Bean(name = "clientADataSource")
     @ConfigurationProperties("app.datasource.clienta")
     public DataSource clientADataSource() {
         return DataSourceBuilder.create().type(HikariDataSource.class).build();
-    }    @Bean(name = "clientBDataSource")
+    }
+
+    @Bean(name = "clientBDataSource")
     @ConfigurationProperties("app.datasource.clientb")
     public DataSource clientBDataSource() {
         return DataSourceBuilder.create().type(HikariDataSource.class).build();
-    }    @Bean(name = "multiRoutingDataSource")
+    }
+
+    @Bean(name = "multiRoutingDataSource")
     public DataSource multiRoutingDataSource() {
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put(DBTypeEnum.MAIN, mainDataSource());
@@ -50,7 +56,9 @@ public class PersistenceConfiguration {
         MultiRoutingDataSource multiRoutingDataSource = new MultiRoutingDataSource();
         multiRoutingDataSource.setDefaultTargetDataSource(mainDataSource());
         multiRoutingDataSource.setTargetDataSources(targetDataSources);        return multiRoutingDataSource;
-    }    @Bean(name = "multiEntityManager")
+    }
+
+    @Bean(name = "multiEntityManager")
     public LocalContainerEntityManagerFactoryBean multiEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(multiRoutingDataSource());
@@ -58,13 +66,17 @@ public class PersistenceConfiguration {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(hibernateProperties());        return em;
-    }    @Bean(name = "multiTransactionManager")
+    }
+
+    @Bean(name = "multiTransactionManager")
     public PlatformTransactionManager multiTransactionManager() {
         JpaTransactionManager transactionManager
                 = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(
                 multiEntityManager().getObject());        return transactionManager;
-    }    @Primary
+    }
+
+    @Primary
     @Bean(name = "dbSessionFactory")
     public LocalSessionFactoryBean dbSessionFactory() {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
@@ -72,7 +84,9 @@ public class PersistenceConfiguration {
         sessionFactoryBean.setPackagesToScan(PACKAGE_SCAN);
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         return sessionFactoryBean;
-    }    private Properties hibernateProperties() {
+    }
+
+    private Properties hibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.show_sql", true);
         properties.put("hibernate.format_sql", true);        return properties;
