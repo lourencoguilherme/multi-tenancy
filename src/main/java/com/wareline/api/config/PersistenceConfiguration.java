@@ -1,5 +1,6 @@
 package com.wareline.api.config;
 
+import com.wareline.api.config.enums.DBTypeEnum;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -50,9 +51,11 @@ public class PersistenceConfiguration {
     @Bean(name = "multiRoutingDataSource")
     public DataSource multiRoutingDataSource() {
         Map<Object, Object> targetDataSources = new HashMap<>();
+
         targetDataSources.put(DBTypeEnum.MAIN, mainDataSource());
-        targetDataSources.put(DBTypeEnum.CLIENT_A, clientADataSource());
+        targetDataSources.put(DBTypeEnum.JALES, clientADataSource());
         targetDataSources.put(DBTypeEnum.CLIENT_B, clientBDataSource());
+
         MultiRoutingDataSource multiRoutingDataSource = new MultiRoutingDataSource();
         multiRoutingDataSource.setDefaultTargetDataSource(mainDataSource());
         multiRoutingDataSource.setTargetDataSources(targetDataSources);        return multiRoutingDataSource;
